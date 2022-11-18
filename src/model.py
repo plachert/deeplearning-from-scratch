@@ -1,7 +1,6 @@
 from typing import List
-from layer import Layer, LinearLayer
-from loss import Loss, MSELoss
-import random
+from layer import Layer
+from loss import Loss
 
 class Model:
     def __init__(self, layers: List[Layer], loss: Loss, learning_rate: float = 0.001):
@@ -34,18 +33,22 @@ class Model:
         for layer, grads in layers_grads:
             layer.update_params(grads, self.learning_rate)
     
-    def fit(self, X, y, epochs=100):
+    def fit(self, X, y, epochs=10):
         for epoch in range(epochs):
-            y_hat = self.forward_pass(X)
-            layers_grads = self.backpropagation_step(y)
-            self.update_layers(layers_grads)
-            loss = self.loss.compute_cost(y_hat, y)
-            print(f"Loss: {loss}")
+            loss_avg = 0
+            for X_, y_ in zip(X, y):
+                y_hat = self.forward_pass(X_)
+                layers_grads = self.backpropagation_step(y_)
+                self.update_layers(layers_grads)
+                loss = self.loss.compute_cost(y_hat, y_)
+                loss_avg += loss
+            loss_avg /= len(y)
+            print(f"Loss after epoch {epoch}: {loss_avg}")
 
 if __name__ == "__main__":
     features = [0.2, 0.8]#np.random.random((5, 10))
     y = [1]
-    model = Model(layers=[LinearLayer(2, 1)], loss=MSELoss(), learning_rate=0.01)
+    model = Model(layers=[LinearLayer(2, 1)], loss=MSELoss(), learning_rate=0.0001)
     model.fit(features, y)
     print(model.forward_pass(features))
     print(model.layers[0].weights, model.layers[0].biases)
