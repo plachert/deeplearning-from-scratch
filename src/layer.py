@@ -92,3 +92,17 @@ class LinearLayer(Layer):
             output_k += self.biases[k]
             output.append(output_k)
         return output
+
+
+class ReLU(Layer):
+    def compute_input_errors(self, output_errors):
+        pass
+
+    def compute_gradients(self, input_, output_errors):
+        pass
+    
+    def update_params(self, gradients, learning_rate):
+        pass # This Layer has no parameters
+    
+    def __call__(self, input_):
+        pass
