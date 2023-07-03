@@ -95,14 +95,32 @@ class LinearLayer(Layer):
 
 
 class ReLU(Layer):
-    def compute_input_errors(self, output_errors):
-        pass
+    def __init__(self, n_features: int):
+        self.n_features = n_features
+        
+    def compute_input_errors(self, output_errors, output):
+        assert len(output_errors) == self.n_features
+        input_errors = []
+        for j in range(self.n_features):
+            output_errors_j = output_errors[j]
+            outputs_j = output[j]
+            input_errors_j = output_errors_j * (outputs_j > 0) # if it was 0
+            input_errors.append(input_errors_j)
+        return input_errors
 
     def compute_gradients(self, input_, output_errors):
-        pass
+        pass # This Layer has no parameters
     
     def update_params(self, gradients, learning_rate):
         pass # This Layer has no parameters
     
     def __call__(self, input_):
-        pass
+        output = []
+        for j in range(self.n_features):
+            input_j = input_[j]
+            if input_j < 0:
+                output_j = 0
+            else:
+                output_j = input_j
+            output.append(output_j)
+        return output
